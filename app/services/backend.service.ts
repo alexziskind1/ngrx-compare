@@ -11,7 +11,20 @@ export class BackendService {
 
     constructor(private http: Http) { }
 
-    toggleSwitch(checked: boolean) {
+    toggleSwitchObs(checked: boolean): Observable<boolean> {
+        this.localModelSwitchValue = checked;
+        let url = 'HttpTriggerJS1';
+        if (this.callNumber % 3 === 0) {
+            url = 'fakeUrl';
+        }
+        this.callNumber++;
+        return this.http.post(`${this.baseUrl}/${url}?checked=${checked}`, JSON.stringify({ checked: checked }))
+            .map(res => res.json());
+        //.do(console.log)
+        //.map(res => res.rows);
+    }
+
+    toggleSwitchPromise(checked: boolean) {
         this.localModelSwitchValue = checked;
         let url = 'HttpTriggerJS1';
         if (this.callNumber % 3 === 0) {

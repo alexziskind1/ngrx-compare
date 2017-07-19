@@ -5,6 +5,7 @@
 
     <Label [text]="localMessage"></Label>
     <Label [text]="localSwitchMessage"></Label>
+    <Label [text]="localSwitchChecked$ | async"></Label>
 
     <Switch (checkedChange)="onCheckedChange($event)"></Switch>
 </StackLayout>

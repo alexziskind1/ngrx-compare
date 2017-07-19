@@ -4,6 +4,11 @@ import { NativeScriptHttpModule } from "nativescript-angular";
 import { AppRoutingModule } from "./app.routing";
 import { AppComponent } from "./app.component";
 import { BackendService } from "./services/backend.service";
+import { StoreModule } from "@ngrx/store";
+import { EffectsModule } from "@ngrx/effects";
+import { reducer } from "./store/reducers/reducer";
+import { INITIAL_APPLICATION_STATE } from "./models/application-state.interface";
+import { SwitchEffects } from "./store/effects/switch-effects";
 
 
 @NgModule({
@@ -13,8 +18,9 @@ import { BackendService } from "./services/backend.service";
     imports: [
         NativeScriptModule,
         NativeScriptHttpModule,
-        AppRoutingModule
-
+        AppRoutingModule,
+        StoreModule.provideStore(reducer, INITIAL_APPLICATION_STATE),
+        EffectsModule.run(SwitchEffects)
     ],
     declarations: [
         AppComponent

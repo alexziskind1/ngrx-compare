@@ -3,6 +3,9 @@ import { Observable } from "rxjs/Observable";
 import { Switch } from 'ui/switch';
 import { FromEventObservable } from "rxjs/observable/FromEventObservable";
 import { BackendService } from "./services/backend.service";
+import { Store } from "@ngrx/store";
+import { ApplicationState } from "./models/application-state.interface";
+import { ToggleSwitchAction } from "./store/actions/actions";
 
 @Component({
     selector: "ns-app",
@@ -10,8 +13,6 @@ import { BackendService } from "./services/backend.service";
 })
 
 export class AppComponent {
-
-
 
     //public checked: boolean = false;
     public localMessage: string;
@@ -25,9 +26,20 @@ export class AppComponent {
         return 'local switch: ' + this.backendService.localModelSwitchValue;
     }
 
+    public localSwitchChecked$: Observable<boolean>;
+
     @ViewChild('btn') buttonRef: ElementRef;
 
-    constructor(private backendService: BackendService) { }
+    constructor(
+        private store: Store<ApplicationState>,
+        private backendService: BackendService)
+    { }
+
+    ngOnInit() {
+        this.localSwitchChecked$ = this.store.select(store => {
+            return store.localSwitch;
+        });
+    }
 
     ngAfterViewInit() {
         let theButton = this.buttonRef.nativeElement;
@@ -44,8 +56,9 @@ export class AppComponent {
     onCheckedChange(args) {
         let theSwitch = <Switch>args.object;
         //this.checked = !this.checked;
-        this.getStuffChecked(theSwitch.checked);
+        //this.getStuffChecked(theSwitch.checked);
         //this.localMessage = theSwitch.checked ? 'local checked: true' : 'local checked: false';
+        this.store.dispatch(new ToggleSwitchAction(theSwitch.checked));
     }
 
     onTapCounter(args) {
@@ -65,7 +78,7 @@ export class AppComponent {
     }
 
     getStuffChecked(checked: boolean) {
-        this.backendService.toggleSwitch(checked)
+        this.backendService.toggleSwitchPromise(checked)
             .then((backendChecked) => {
                 this.message = 'cloud checked: ' + backendChecked;
             })
