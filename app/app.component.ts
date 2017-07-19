@@ -1,8 +1,8 @@
 import { Component, ViewChild, ElementRef } from "@angular/core";
-import { Http } from '@angular/http';
 import { Observable } from "rxjs/Observable";
 import { Switch } from 'ui/switch';
 import { FromEventObservable } from "rxjs/observable/FromEventObservable";
+import { BackendService } from "./services/backend.service";
 
 @Component({
     selector: "ns-app",
@@ -11,7 +11,7 @@ import { FromEventObservable } from "rxjs/observable/FromEventObservable";
 
 export class AppComponent {
 
-    private baseUrl: string = 'https://tns-fn-app1.azurewebsites.net/api';
+
 
     //public checked: boolean = false;
     public localMessage: string;
@@ -21,9 +21,13 @@ export class AppComponent {
 
     private delay = 5000;
 
+    public get localSwitchMessage() {
+        return 'local switch: ' + this.backendService.localModelSwitchValue;
+    }
+
     @ViewChild('btn') buttonRef: ElementRef;
 
-    constructor(private http: Http) { }
+    constructor(private backendService: BackendService) { }
 
     ngAfterViewInit() {
         let theButton = this.buttonRef.nativeElement;
@@ -41,6 +45,7 @@ export class AppComponent {
         let theSwitch = <Switch>args.object;
         //this.checked = !this.checked;
         this.getStuffChecked(theSwitch.checked);
+        //this.localMessage = theSwitch.checked ? 'local checked: true' : 'local checked: false';
     }
 
     onTapCounter(args) {
@@ -60,17 +65,18 @@ export class AppComponent {
     }
 
     getStuffChecked(checked: boolean) {
-        fetch(`${this.baseUrl}/HttpTriggerJS1?checked=${checked}`)
-            .then(res => {
-                res.text().then(s => {
-                    this.message = 'cloud checked: ' + s;
-                    //this.checked
-                });
+        this.backendService.toggleSwitch(checked)
+            .then((backendChecked) => {
+                this.message = 'cloud checked: ' + backendChecked;
+            })
+            .catch((er) => {
+                this.message = 'cloud checked: error';
+                //this.localMessage = checked ? 'local checked: false' : 'local checked: true';
             });
     }
 
     getStuffCounter() {
-        fetch(`${this.baseUrl}/HttpTriggerJS1?name=${this.counter}`)
+        this.backendService.getStuffCounter(this.counter)
             .then(res => {
                 res.text().then(s => {
                     this.message = 'cloud counter: ' + s;
@@ -79,17 +85,15 @@ export class AppComponent {
             });
     }
 
-    getStuffDelay(d) {
-        fetch(`${this.baseUrl}/HttpTriggerJS1?delay=${d}`)
+    getStuffDelay(delay) {
+        this.backendService.getStuffDelay(delay)
             .then(res => {
                 res.text().then(s => this.message = s);
             });
     }
 
     getStuffObs(): Observable<string> {
-        return this.http.get(`${this.baseUrl}/HttpTriggerJS1?name=${this.counter}`)
-            .map(res => res.text())
-            .do(console.log);
+        return this.backendService.getStuffObs(this.counter);
     }
 
 }
