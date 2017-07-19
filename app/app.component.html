@@ -1,0 +1,9 @@
+<StackLayout>
+    <Button #btn text="TAP"></Button>
+
+    <Label [text]="message"></Label>
+
+    <Label [text]="localMessage"></Label>
+
+    <Switch (checkedChange)="onCheckedChange($event)"></Switch>
+</StackLayout>
