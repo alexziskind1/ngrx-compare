@@ -14,6 +14,7 @@ export class SwitchEffects {
     @Effect() toggleSwitchEffect: Observable<Action> = this.actions$
         .ofType(TOGGLE_SWITCH)
         .switchMap(action => this.backendService.toggleSwitchObs(action.payload))
-        .map((res: boolean) => new SwitchToggledAction(res));
+        .map((res: boolean) => new SwitchToggledAction(res))
+        .catch((err, caught) => caught.do(console.log));
 
 }

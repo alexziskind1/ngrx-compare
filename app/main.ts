@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/switchmap';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/catch';
 
 // A traditional NativeScript application starts by initializing global objects, setting up global CSS rules, creating, and navigating to the main page. 
 // Angular applications need to take care of their own initialization: modules, components, directives, routes, DI providers. 

@@ -14,7 +14,7 @@ export class BackendService {
     toggleSwitchObs(checked: boolean): Observable<boolean> {
         this.localModelSwitchValue = checked;
         let url = 'HttpTriggerJS1';
-        if (this.callNumber % 3 === 0) {
+        if (this.callNumber % 2 === 0) {
             url = 'fakeUrl';
         }
         this.callNumber++;
