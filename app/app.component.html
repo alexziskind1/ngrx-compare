@@ -5,7 +5,15 @@
 
     <Label [text]="localMessage"></Label>
     <Label [text]="localSwitchMessage"></Label>
-    <Label [text]="localSwitchChecked$ | async"></Label>
+
+    <StackLayout orientation="horizontal">
+        <Label text="cloud: "></Label>
+        <Label [text]="remoteSwitchChecked$ | async"></Label>
+    </StackLayout>
+    <StackLayout orientation="horizontal">
+        <Label text="local: "></Label>
+        <Label [text]="localSwitchChecked$ | async"></Label>
+    </StackLayout>
 
     <Switch (checkedChange)="onCheckedChange($event)"></Switch>
 </StackLayout>

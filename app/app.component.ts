@@ -23,10 +23,11 @@ export class AppComponent {
     private delay = 5000;
 
     public get localSwitchMessage() {
-        return 'local switch: ' + this.backendService.localModelSwitchValue;
+        return 'local switch: ' + this.backendService.applicationState.localSwitch;
     }
 
     public localSwitchChecked$: Observable<boolean>;
+    public remoteSwitchChecked$: Observable<boolean>;
 
     @ViewChild('btn') buttonRef: ElementRef;
 
@@ -38,6 +39,9 @@ export class AppComponent {
     ngOnInit() {
         this.localSwitchChecked$ = this.store.select(store => {
             return store.localSwitch;
+        });
+        this.remoteSwitchChecked$ = this.store.select(store => {
+            return store.remoteSwitch;
         });
     }
 

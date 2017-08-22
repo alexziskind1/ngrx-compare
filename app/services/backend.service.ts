@@ -1,31 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import { Observable } from "rxjs/Observable";
+import { ApplicationState, INITIAL_APPLICATION_STATE } from "../models/application-state.interface";
+
 
 @Injectable()
 export class BackendService {
 
     private baseUrl: string = 'https://tns-fn-app1.azurewebsites.net/api';
     private callNumber = 1;
-    public localModelSwitchValue = false;
+    //public localModelSwitchValue = false;
+    public applicationState: ApplicationState = INITIAL_APPLICATION_STATE;
 
     constructor(private http: Http) { }
 
     toggleSwitchObs(checked: boolean): Observable<boolean> {
-        this.localModelSwitchValue = checked;
+        //this.localModelSwitchValue = checked;
         let url = 'HttpTriggerJS1';
-        if (this.callNumber % 2 === 0) {
+        if (this.callNumber % 3 === 0) {
             url = 'fakeUrl';
         }
         this.callNumber++;
         return this.http.post(`${this.baseUrl}/${url}?checked=${checked}`, JSON.stringify({ checked: checked }))
             .map(res => res.json());
-        //.do(console.log)
-        //.map(res => res.rows);
     }
 
     toggleSwitchPromise(checked: boolean) {
-        this.localModelSwitchValue = checked;
+        this.applicationState.localSwitch = checked;
         let url = 'HttpTriggerJS1';
         if (this.callNumber % 3 === 0) {
             url = 'fakeUrl';
@@ -41,22 +42,22 @@ export class BackendService {
                         res.json()
                             .then(s => {
                                 if (typeof s === 'boolean') {
-                                    this.localModelSwitchValue = s;
-                                    resolve(this.localModelSwitchValue);
+                                    this.applicationState.localSwitch = s;
+                                    resolve(this.applicationState.localSwitch);
                                 } else if (s.statusCode === 500) {
-                                    this.localModelSwitchValue = !checked;
+                                    this.applicationState.localSwitch = !checked;
                                     reject('server error');
                                 }
                             });
                     } else {
                         setTimeout(() => {
-                            this.localModelSwitchValue = !checked;
+                            this.applicationState.localSwitch = !checked;
                             reject('result not ok');
                         }, 1000);
                     }
                 })
                 .catch((er) => {
-                    this.localModelSwitchValue = !checked;
+                    this.applicationState.localSwitch = !checked;
                     reject(er);
                 });
         });
